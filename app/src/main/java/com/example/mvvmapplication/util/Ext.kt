@@ -35,9 +35,3 @@ fun ImageView.loadImageFromUrlRect(url: String){
         .load(url)
         .into(this)
 }
-
-enum class Status {
-    LOADING,
-    SUCCESS,
-    ERROR
-}

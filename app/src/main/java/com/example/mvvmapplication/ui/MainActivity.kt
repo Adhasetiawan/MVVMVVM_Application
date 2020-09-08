@@ -2,6 +2,8 @@ package com.example.mvvmapplication.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvmapplication.R
@@ -41,12 +43,17 @@ class MainActivity : AppCompatActivity() {
                     it.successData.let { movies ->
                         movies?.forEach {
                             groupAdapter.add(MovieItem(it))
+                            Timber.d("result -> " + it )
                         }
                     }
                     segaran.isRefreshing = false
                 }
                 is Resource.Error -> {
-                    Timber.e(it.msg)
+                    Toast.makeText(
+                        this,
+                        "error pada->" + Timber.e(it.toString()),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         })
