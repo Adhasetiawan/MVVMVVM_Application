@@ -89,6 +89,9 @@ dependencies {
     //room api
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0-alpha07'
 
+    //viewmodel coroutine
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
+
     // room
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"

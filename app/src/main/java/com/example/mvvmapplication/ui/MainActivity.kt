@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvmapplication.R
 import com.example.mvvmapplication.data.lokal.entity.Movie
+import com.example.mvvmapplication.data.model.MovieResponse
 import com.example.mvvmapplication.data.respository.Resource
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.ViewHolder
@@ -19,7 +20,7 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
 
     private val vm: MovieViewModel by viewModel()
-    private var listmovie : MutableList<Movie> = mutableListOf()
+    private var listmovie : MutableList<MovieResponse.Result> = mutableListOf()
     private var groupAdapter: GroupAdapter<ViewHolder> = GroupAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 is Resource.Loading -> {
                     it.loadingData?.let { movies ->
                         if (listmovie.isNotEmpty()) listmovie.clear()
-                        listmovie.addAll(movies)
+                        listmovie.addAll(movies.results)
                         groupAdapter.notifyDataSetChanged()
 
                         segaran.isRefreshing = false
@@ -41,9 +42,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     it.successData.let { movies ->
-                        movies?.forEach {
+                        if (listmovie.isNotEmpty()) listmovie.clear()
+                        movies?.results?.forEach {
                             groupAdapter.add(MovieItem(it))
-                            Timber.d("result -> " + it )
                         }
                     }
                     segaran.isRefreshing = false

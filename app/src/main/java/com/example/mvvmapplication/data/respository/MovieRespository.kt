@@ -15,39 +15,43 @@ import timber.log.Timber
 class MovieRespository(private val apiService: apiService,
                        private val movieDao: MovieDao) {
 
-    fun getListMovie(): Observable<Resource<List<Movie>>> {
-        return object : PersistableNetworkResourceCall<MovieResponse.Movie, List<Movie>>(){
-            override fun loadFromDatabase(): Maybe<List<Movie>> {
-                return movieDao.findAllMovie()
-            }
-
-            override fun createNetworkCall(): Single<MovieResponse.Movie> {
-                return apiService.getMyMovie()
-            }
-
-            override fun onNetworkCallSuccess(
-                emitter: ObservableEmitter<Resource<List<Movie>>>,
-                response: MovieResponse.Movie
-            ) {
-                if (response.results.isEmpty()){
-                    emitter.onNext(Resource.Error("Data tidak ada", null))
-                } else{
-                    movieDao.deleteAll()
-
-                    response.results.let {
-                        Timber.d("masukan kedalam tabel")
-                        val semuadata = it.map { data -> Movie.from(data) }
-                        movieDao.insert(semuadata)
-                    }
-                    emitter.setDisposable(movieDao.streamAll()
-                        .subscribeBy(
-                            onNext = {
-                                emitter.onNext(Resource.Success(it))
-                            }
-                        ))
-                }
-            }
-
-        }.resourceObservable
+    fun getListMovie(): Single<MovieResponse.Movie>{
+        return apiService.getMyMovie()
     }
+
+//    fun getListMovie(): Observable<Resource<List<Movie>>> {
+//        return object : PersistableNetworkResourceCall<MovieResponse.Movie, List<Movie>>(){
+//            override fun loadFromDatabase(): Maybe<List<Movie>> {
+//                return movieDao.findAllMovie()
+//            }
+//
+//            override fun createNetworkCall(): Single<MovieResponse.Movie> {
+//                return apiService.getMyMovie()
+//            }
+//
+//            override fun onNetworkCallSuccess(
+//                emitter: ObservableEmitter<Resource<List<Movie>>>,
+//                response: MovieResponse.Movie
+//            ) {
+//                if (response.results.isEmpty()){
+//                    emitter.onNext(Resource.Error("Data tidak ada", null))
+//                } else{
+//                    movieDao.deleteAll()
+//
+//                    response.results.let {
+//                        Timber.d("masukan kedalam tabel")
+//                        val semuadata = it.map { data -> Movie.from(data) }
+//                        movieDao.insert(semuadata)
+//                    }
+//                    emitter.setDisposable(movieDao.streamAll()
+//                        .subscribeBy(
+//                            onNext = {
+//                                emitter.onNext(Resource.Success(it))
+//                            }
+//                        ))
+//                }
+//            }
+//
+//        }.resourceObservable
+//    }
     }
